@@ -38,7 +38,7 @@ exports.createArticlesTable = () => {
 exports.createCommentsTable = () => {
   return connection.query(`
         CREATE TABLE comments (
-        comment_id INT PRIMARY KEY,
+        comment_id SERIAL PRIMARY KEY,
         body TEXT NOT NULL,
         votes INT DEFAULT 0, 
         author VARCHAR(50) REFERENCES users(username),
