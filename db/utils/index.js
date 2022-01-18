@@ -7,7 +7,7 @@ exports.dropTables = (name) => {
 exports.createTopicsTable = () => {
   return connection.query(`
     CREATE TABLE topics (
-        descrition VARCHAR(100) NOT NULL,
+        description VARCHAR(100) NOT NULL,
         slug VARCHAR(20) PRIMARY KEY
     );
     `);
@@ -45,4 +45,34 @@ exports.createCommentsTable = () => {
         article_id INT REFERENCES articles(article_id),
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );`);
+};
+
+/* The `format` function takes in an array of objects and returns an array of arrays.
+
+Each returned array is values of properties of each object.
+ */
+exports.formatTopicsData = (topicData) => {
+  return topicData.map(({ description, slug }) => {
+    return [description, slug];
+  });
+};
+
+exports.formatUsersData = (userData) => {
+  return userData.map(({ username, name, avatar_url }) => {
+    return [username, name, avatar_url];
+  });
+};
+
+exports.formatArticlesData = (articleData) => {
+  return articleData.map(
+    ({ title, topic, author, body, created_at, votes }) => {
+      return [title, topic, author, body, created_at, votes];
+    }
+  );
+};
+
+exports.formatCommentsData = (commentData) => {
+  return commentData.map(({ body, votes, author, article_id, created_at }) => {
+    return [body, votes, author, article_id, created_at];
+  });
 };
