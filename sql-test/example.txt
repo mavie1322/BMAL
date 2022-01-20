@@ -1,8 +1,6 @@
-You are now connected to database "nc_news" as user "mavie1322".
-               description               |   slug   
------------------------------------------+----------
- Code is love, code is life              | coding
- FOOTIE!                                 | football
- Hey good looking, what you got cooking? | cooking
-(3 rows)
+You are now connected to database "nc_news_test" as user "mavie1322".
+ comment_id |                                                                body                                                                | votes |    author     | article_id |       created_at       
+------------+------------------------------------------------------------------------------------------------------------------------------------+-------+---------------+------------+------------------------
+          2 | The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky. |    14 | butter_bridge |          1 | 2020-10-31 03:03:00+00
+(1 row)
 

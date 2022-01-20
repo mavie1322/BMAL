@@ -1,5 +1,8 @@
 
-\c nc_news
+\c nc_news_test
 
-SELECT * FROM topics;
 
+
+SELECT *
+FROM comments
+WHERE comment_id = 2;
