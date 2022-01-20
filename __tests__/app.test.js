@@ -26,12 +26,12 @@ describe('/api/topics', () => {
         });
     });
 
-    it("status: 404 and return message 'Invalid Url' ", () => {
+    it("status: 404 and return message 'Invalid url' ", () => {
       return request(app)
         .get('/api/tropics')
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe('Invalid Url');
+          expect(body.msg).toBe('Invalid url');
         });
     });
   });
@@ -58,10 +58,26 @@ describe('/api/articles/:article_id', () => {
           });
         });
     });
+    it('status 404 and returns message "Not Found" for aricle_id that does not exist', () => {
+      return request(app)
+        .get('/api/articles/1000')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not Found');
+        });
+    });
+    it('status: 400 and returns message "Bad Request" for invalide article_id', () => {
+      return request(app)
+        .get('/api/articles/pip')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Invalid input');
+        });
+    });
   });
 
   describe('PATCH', () => {
-    it('status 200 and returns with the updated article', () => {
+    it('status: 200 and returns with the updated article', () => {
       const articleUpdated = {
         votes: -10,
       };
@@ -76,9 +92,59 @@ describe('/api/articles/:article_id', () => {
             topic: 'mitch',
             author: 'butter_bridge',
             body: 'I find this existence challenging',
-            created_at: new Date(1594329060000),
+            created_at: '2020-07-09T21:11:00.000Z',
             votes: 90,
           });
+        });
+    });
+    it('status: 200 and return the article with empty object', () => {
+      const articleUpdated = {};
+      return request(app)
+        .patch('/api/articles/10')
+        .send(articleUpdated)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toEqual({
+            article_id: 10,
+            title: 'Seven inspirational thought leaders from Manchester UK',
+            topic: 'mitch',
+            author: 'rogersop',
+            body: "Who are we kidding, there is only one, and it's Mitch!",
+            created_at: '2020-05-14T05:15:00.000Z',
+            votes: 0,
+          });
+        });
+    });
+    it('status: 200 and returns the article without changing the vote', () => {
+      const articleUpdated = {
+        votres: 1,
+      };
+      return request(app)
+        .patch('/api/articles/1')
+        .send(articleUpdated)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toEqual({
+            article_id: 1,
+            title: 'Living in the shadow of a great man',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'I find this existence challenging',
+            created_at: '2020-07-09T21:11:00.000Z',
+            votes: 100,
+          });
+        });
+    });
+    it('status 400 and returns message "Bad Request" for incorrect type provided', () => {
+      const articleUpdated = {
+        votes: 'hello',
+      };
+      return request(app)
+        .patch('/api/articles/5')
+        .send(articleUpdated)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad Request');
         });
     });
   });

@@ -31,7 +31,7 @@ exports.createArticlesTable = () => {
         author VARCHAR(50) REFERENCES users(username),
         body TEXT NOT NULL,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        votes INT DEFAULT 0
+        votes INT NOT NULL
         );`);
 };
 
@@ -40,7 +40,7 @@ exports.createCommentsTable = () => {
         CREATE TABLE comments (
         comment_id SERIAL PRIMARY KEY,
         body TEXT NOT NULL,
-        votes INT DEFAULT 0, 
+        votes INT NOT NULL, 
         author VARCHAR(50) REFERENCES users(username),
         article_id INT REFERENCES articles(article_id),
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -65,14 +65,16 @@ exports.formatUsersData = (userData) => {
 
 exports.formatArticlesData = (articleData) => {
   return articleData.map(
-    ({ title, topic, author, body, created_at, votes }) => {
+    ({ title, topic, author, body, created_at, votes = 0 }) => {
       return [title, topic, author, body, created_at, votes];
     }
   );
 };
 
 exports.formatCommentsData = (commentData) => {
-  return commentData.map(({ body, votes, author, article_id, created_at }) => {
-    return [body, votes, author, article_id, created_at];
-  });
+  return commentData.map(
+    ({ body, votes = 0, author, article_id, created_at }) => {
+      return [body, votes, author, article_id, created_at];
+    }
+  );
 };

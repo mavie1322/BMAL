@@ -12,22 +12,22 @@ exports.selectTopics = () => {
   });
 };
 
-exports.selectArticlesById = async (id) => {
+exports.selectArticleById = (id) => {
   return connection
     .query(
       `SELECT articles.*, COUNT(comment_id) AS comment_count
-  FROM articles
-  JOIN comments
-  ON articles.article_id = comments.article_id
-  WHERE articles.article_id = ${id}
-  GROUP BY articles.article_id;`
+      FROM articles
+      JOIN comments
+      ON articles.article_id = comments.article_id
+      WHERE articles.article_id = ${id}
+      GROUP BY articles.article_id;`
     )
     .then(({ rows }) => {
       return rows[0];
     });
 };
 
-exports.updateArticlesById = (article_id, votes) => {
+exports.updateArticlesById = (article_id, votes = 0) => {
   return connection
     .query(
       `UPDATE articles
@@ -36,7 +36,6 @@ exports.updateArticlesById = (article_id, votes) => {
       [votes]
     )
     .then(({ rows }) => {
-      console.log(rows);
       return rows[0];
     });
 };

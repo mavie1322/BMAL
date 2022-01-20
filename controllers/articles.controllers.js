@@ -1,6 +1,6 @@
 const {
   selectTopics,
-  selectArticlesById,
+  selectArticleById,
   selectCommentsByArticleId,
   updateArticlesById,
   selectArticles,
@@ -17,19 +17,20 @@ exports.getTopics = (req, res, next) => {
       res.status(200).send({ topics });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
 
 exports.getArticleById = (req, res, next) => {
   const id = req.params.article_id;
-  selectArticlesById(id)
+  selectArticleById(id)
     .then((article) => {
+      if (!article) {
+        return Promise.reject({ status: 404, msg: 'Not Found' });
+      }
       res.status(200).send({ article });
     })
     .catch((err) => {
-      console.log(err, '<<<err controller');
       next(err);
     });
 };
@@ -37,12 +38,12 @@ exports.getArticleById = (req, res, next) => {
 exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const { votes } = req.body;
+
   updateArticlesById(article_id, votes)
     .then((result) => {
       res.status(200).send({ article: result });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };

@@ -39,9 +39,6 @@ app.delete('/api/comments/:comment_id', removeCommentById);
 app.patch('/api/comments/:comment_id', patchCommentById);
 
 //ERROR HANDLING
-// app.use((err, req, res, next) => {
-//   res.status(400).send({ msg: "Bad Request" });
-// });
 app.all('*', handle404s);
 
 app.use(handleCustomErrors);
@@ -49,4 +46,5 @@ app.use(handleCustomErrors);
 app.use(handlePsqlErrors);
 
 app.use(handleServerErrors);
+
 module.exports = app;
