@@ -13,14 +13,21 @@ const {
   patchCommentById,
 } = require('./controllers/articles.controllers');
 
+const {
+  handleCustomErrors,
+  handlePsqlErrors,
+  handleServerErrors,
+  handle404s,
+} = require('./errors/index');
+
 app.use(express.json());
 
 app.get('/api/topics', getTopics);
 
-app.get('/api/articles', getArticles);
-
 app.get('/api/users', getUsers);
 app.get('/api/users/:username', getUserByUsername);
+
+app.get('/api/articles', getArticles);
 
 app.get('/api/articles/:article_id', getArticleById);
 app.patch('/api/articles/:article_id', patchArticleById);
@@ -35,16 +42,11 @@ app.patch('/api/comments/:comment_id', patchCommentById);
 // app.use((err, req, res, next) => {
 //   res.status(400).send({ msg: "Bad Request" });
 // });
-app.all('*', (req, res) => {
-  res.status(404).send({ msg: 'Invalid Url' });
-});
+app.all('*', handle404s);
 
-app.use((err, req, res, next) => {
-  if (err.status && err.msg) res.status(err.status).send({ msg: err.msg });
-  else next(err);
-});
+app.use(handleCustomErrors);
 
-app.use((err, req, res, next) => {
-  res.status(500).send({ msg: 'Internal server error' });
-});
+app.use(handlePsqlErrors);
+
+app.use(handleServerErrors);
 module.exports = app;
