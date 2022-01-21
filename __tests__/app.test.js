@@ -39,7 +39,7 @@ describe('/api/topics', () => {
 
 describe('/api/articles/:article_id', () => {
   describe('GET', () => {
-    it('status: 200 and returns the article with the given article_id', () => {
+    it('status: 200 and returns the article with the given article id', () => {
       return request(app)
         .get('/api/articles/1')
         .expect(200)
@@ -58,7 +58,7 @@ describe('/api/articles/:article_id', () => {
           });
         });
     });
-    it('status 404 and returns message "Not Found" for aricle_id that does not exist', () => {
+    it('status: 404 and returns message for valid article id that does not exist', () => {
       return request(app)
         .get('/api/articles/1000')
         .expect(404)
@@ -66,7 +66,7 @@ describe('/api/articles/:article_id', () => {
           expect(body.msg).toBe('Not Found');
         });
     });
-    it('status: 400 and returns message "Bad Request" for invalid article_id', () => {
+    it('status: 400 and returns message for invalid article id', () => {
       return request(app)
         .get('/api/articles/pip')
         .expect(400)
@@ -135,7 +135,7 @@ describe('/api/articles/:article_id', () => {
           });
         });
     });
-    it('status 400 and returns message "Bad Request" for incorrect type provided', () => {
+    it('status 400 and returns message for incorrect type provided in the request body', () => {
       const articleUpdated = {
         votes: 'hello',
       };
@@ -145,6 +145,22 @@ describe('/api/articles/:article_id', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe('Bad Request');
+        });
+    });
+    it('status: 404 and returns message for valid article id that does not exist', () => {
+      return request(app)
+        .patch('/api/articles/70')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not Found');
+        });
+    });
+    it('status: 400 and returns message for invalid article id', () => {
+      return request(app)
+        .patch('/api/articles/jug')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Invalid input');
         });
     });
   });
@@ -249,7 +265,7 @@ describe('/api/articles', () => {
 
 describe('/api/articles/:article_id/comments', () => {
   describe('GET', () => {
-    it('status: 200 and return an array of comment for the given article_id', () => {
+    it('status: 200 and return an array of comment for the given article id', () => {
       return request(app)
         .get('/api/articles/3/comments')
         .expect(200)
@@ -267,7 +283,7 @@ describe('/api/articles/:article_id/comments', () => {
           });
         });
     });
-    it('status: 200 and return empty array object for article_id that exist but does not have any comment', () => {
+    it('status: 200 and return empty array object for article id that exist but does not have any comment', () => {
       return request(app)
         .get('/api/articles/2/comments')
         .expect(200)
@@ -276,7 +292,7 @@ describe('/api/articles/:article_id/comments', () => {
           expect(comments.length).toBe(0);
         });
     });
-    it('status 404 and returns message for aricle_id that is valid but does not exist', () => {
+    it('status: 404 and returns message for valid article id that does not exist', () => {
       return request(app)
         .get('/api/articles/1000/comments')
         .expect(404)
@@ -284,7 +300,7 @@ describe('/api/articles/:article_id/comments', () => {
           expect(body.msg).toBe('Not Found');
         });
     });
-    it('status: 400 and returns message for invalid article_id', () => {
+    it('status: 400 and returns message for invalid article id', () => {
       return request(app)
         .get('/api/articles/pip/comments')
         .expect(400)
@@ -294,7 +310,7 @@ describe('/api/articles/:article_id/comments', () => {
     });
   });
   describe('POST', () => {
-    it('status 201 and returns with the posted comments', () => {
+    it('status: 201 and returns with the posted comments', () => {
       const commentToAdd = {
         username: 'lurker',
         body: 'Where is the King? I will lead the fight',
@@ -350,7 +366,7 @@ describe('/api/articles/:article_id/comments', () => {
         });
     });
 
-    it('status 404 and returns message for aricle_id that is valid but does not exist', () => {
+    it('status: 404 and returns message for valid article id that does not exist', () => {
       const commentToAdd = {
         username: 'rogersop',
         body: 'Tasha makes people feel like she is on their side so they can spill the beans',
@@ -363,7 +379,7 @@ describe('/api/articles/:article_id/comments', () => {
           expect(body.msg).toBe('Not Found');
         });
     });
-    it('status: 400 and returns message for invalid article_id', () => {
+    it('status: 400 and returns message for invalid article id', () => {
       const commentToAdd = {
         username: 'rogersop',
         body: 'Tasha makes people feel like she is on their side so they can spill the beans',
@@ -378,13 +394,13 @@ describe('/api/articles/:article_id/comments', () => {
     });
   });
 });
-//NEED TO UNDERSTAND WHY THE ERROR IS GOING TO INVALID URL
+
 describe('/api/comments/:comment_id', () => {
   describe('DELETE', () => {
     it('status: 204 and return no content', () => {
       return request(app).delete('/api/comments/2').expect(204);
     });
-    it('status 404 and returns message for comment that does not exist', () => {
+    it('status: 404 and returns message for valid comment id that does not exist', () => {
       return request(app)
         .delete('/api/comments/0')
         .expect(404)
@@ -458,7 +474,7 @@ describe('/api/comments/:comment_id', () => {
           });
         });
     });
-    it('status: 400 and returns message "Bad Request" for incorrect type provided in the request body', () => {
+    it('status: 400 and returns message for incorrect type provided in the request body', () => {
       const commentUpdated = {
         votes: 'hello',
       };
@@ -470,7 +486,7 @@ describe('/api/comments/:comment_id', () => {
           expect(body.msg).toBe('Bad Request');
         });
     });
-    it('status 404 and returns message for comment id that does not exist', () => {
+    it('status: 404 and returns message for valid comment id that does not exist', () => {
       return request(app)
         .patch('/api/comments/90')
         .expect(404)
@@ -480,7 +496,7 @@ describe('/api/comments/:comment_id', () => {
     });
     it('status: 400 and returns message for invalid comment id', () => {
       return request(app)
-        .patch('/api/articles/jug')
+        .patch('/api/comments/break')
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe('Invalid input');
@@ -489,7 +505,7 @@ describe('/api/comments/:comment_id', () => {
   });
 });
 
-describe.only('/api/users', () => {
+describe('/api/users', () => {
   describe('GET', () => {
     it('status: 200 and return array of all users', () => {
       return request(app)
@@ -531,6 +547,14 @@ describe('/api/users/:username', () => {
             avatar_url: expect.any(String),
             name: expect.any(String),
           });
+        });
+    });
+    it('status: 404 and return message when the username is valid but it does not exist', () => {
+      return request(app)
+        .get('/api/users/georges')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not Found');
         });
     });
   });

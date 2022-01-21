@@ -14,7 +14,9 @@ const {
 const {
   checkArticleIdExist,
   checkCommentIdExist,
+  checkUsernameExist,
 } = require('../db/utils/index');
+const { request } = require('express');
 
 exports.getTopics = (req, res, next) => {
   selectTopics()
@@ -45,8 +47,12 @@ exports.patchArticleById = (req, res, next) => {
   const { votes } = req.body;
 
   updateArticlesById(article_id, votes)
-    .then((result) => {
-      res.status(200).send({ article: result });
+    .then((article) => {
+      if (!article) {
+        return Promise.reject({ status: 404, msg: 'Not Found' });
+      } else {
+        res.status(200).send({ article });
+      }
     })
     .catch((err) => {
       next(err);
@@ -125,7 +131,7 @@ exports.postCommentByArticleId = (req, res, next) => {
     next({ status: 400, msg: 'Bad Request' });
   }
 
-  return checkArticleIdExist(article_id)
+  checkArticleIdExist(article_id)
     .then((isArticleExist) => {
       if (isArticleExist) {
         insertCommentByArticleId(article_id, reqBody)
@@ -133,7 +139,6 @@ exports.postCommentByArticleId = (req, res, next) => {
             res.status(201).send({ comment });
           })
           .catch((err) => {
-            console.log(err), '<<<insert';
             next(err);
           });
       } else {
@@ -141,54 +146,55 @@ exports.postCommentByArticleId = (req, res, next) => {
       }
     })
     .catch((err) => {
-      console.log(err, '<<<is Exist');
       next(err);
     });
 };
 
 exports.removeCommentById = (req, res, next) => {
   const { comment_id } = req.params;
-  checkCommentIdExist(comment_id)
+
+  return checkCommentIdExist(comment_id)
     .then((isCommentExist) => {
       if (isCommentExist) {
         deleteCommentById(comment_id)
-          .then(({ rowCount }) => {
+          .then((result) => {
             res.status(204).end();
           })
           .catch((err) => {
-            console.log(err);
             next(err);
           });
       } else {
-        return Promise.reject({ status: 400, msg: 'Invalid input' });
+        return Promise.reject({ status: 404, msg: 'Not Found' });
       }
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
 
 exports.getUsers = (req, res, next) => {
-  selectUsers()
+  console.log('in the model');
+  const { username } = req.params;
+  selectUsers(username)
     .then((users) => {
       res.status(200).send({ users });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
 
 exports.getUserByUsername = (req, res, next) => {
-  console.log(req.params);
   const { username } = req.params;
   selectUserByUsername(username)
     .then((user) => {
-      res.status(200).send({ user });
+      if (!user) {
+        return Promise.reject({ status: 404, msg: 'Not Found' });
+      } else {
+        res.status(200).send({ user });
+      }
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };

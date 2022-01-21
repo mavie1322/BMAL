@@ -111,3 +111,20 @@ exports.checkCommentIdExist = (comment_id) => {
       }
     });
 };
+
+exports.checkUsernameExist = (username) => {
+  return connection
+    .query(
+      `SELECT *
+      FROM users
+      WHERE users.username = ${username}`
+    )
+    .then(({ rows }) => {
+      console.log(rows, '<<<rows');
+      if (rows.length) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+};
