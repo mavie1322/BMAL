@@ -228,6 +228,15 @@ describe('/api/articles', () => {
           });
         });
     });
+    it('QUERY: by topic,status: 200 and returns an empty array of articles filter by topic', () => {
+      return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles).toHaveLength(0);
+        });
+    });
     it("Non-existing Route - status: 404 and return message 'Invalid url' ", () => {
       return request(app)
         .get('/api/artricles')

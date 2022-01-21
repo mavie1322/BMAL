@@ -14,7 +14,7 @@ const {
 const {
   checkArticleIdExist,
   checkCommentIdExist,
-  checkUsernameExist,
+  getArticlesColumn,
 } = require('../db/utils/index');
 const { request } = require('express');
 
@@ -60,31 +60,47 @@ exports.patchArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const validSortBy = [
-    'author',
-    'title',
-    'article_id',
-    'topic',
-    'created_at',
-    'votes',
-    'comment_count',
-  ];
-  const validOrder = ['ASC', 'DESC'];
-  const validTopic = ['mitch', 'cats', 'paper'];
+  // const validSortBy = [
+  //   'author',
+  //   'title',
+  //   'article_id',
+  //   'topic',
+  //   'created_at',
+  //   'votes',
+  //   'comment_count',
+  // ];
+  return getArticlesColumn()
+    .then((articlesColumn) => {
+      const validSortBy = articlesColumn;
+      const validOrder = ['ASC', 'DESC'];
+      //get the array of topic slug
+      return selectTopics()
+        .then((topics) => {
+          const validTopic = topics.map((topic) => {
+            return topic.slug;
+          });
+          const queries = req.query;
+          //set by default these queries
+          queries.sort_by ??= 'created_at';
+          queries.order ??= 'DESC';
 
-  const queries = req.query;
-  queries.sort_by ??= 'created_at';
-  queries.order ??= 'DESC';
+          if (
+            !validSortBy.includes(queries.sort_by) ||
+            !validOrder.includes(queries.order)
+          )
+            next({ status: 400, msg: 'Invalid query' });
 
-  if (
-    !validSortBy.includes(queries.sort_by) ||
-    !validOrder.includes(queries.order)
-  )
-    next({ status: 400, msg: 'Invalid query' });
-
-  selectArticles(queries)
-    .then((articles) => {
-      res.status(200).send({ articles });
+          return selectArticles(queries)
+            .then((articles) => {
+              res.status(200).send({ articles });
+            })
+            .catch((err) => {
+              next(err);
+            });
+        })
+        .catch((err) => {
+          next(err);
+        });
     })
     .catch((err) => {
       next(err);
@@ -173,7 +189,6 @@ exports.removeCommentById = (req, res, next) => {
 };
 
 exports.getUsers = (req, res, next) => {
-  console.log('in the model');
   const { username } = req.params;
   selectUsers(username)
     .then((users) => {

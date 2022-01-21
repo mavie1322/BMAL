@@ -103,7 +103,6 @@ exports.checkCommentIdExist = (comment_id) => {
       WHERE comments.comment_id = ${comment_id}`
     )
     .then(({ rows }) => {
-      console.log(rows, '<<<rows');
       if (rows.length) {
         return true;
       } else {
@@ -112,19 +111,14 @@ exports.checkCommentIdExist = (comment_id) => {
     });
 };
 
-exports.checkUsernameExist = (username) => {
-  return connection
-    .query(
-      `SELECT *
-      FROM users
-      WHERE users.username = ${username}`
-    )
-    .then(({ rows }) => {
-      console.log(rows, '<<<rows');
-      if (rows.length) {
-        return true;
-      } else {
-        return false;
-      }
-    });
+exports.getArticlesColumn = async () => {
+  const articleRows = await connection.query(
+    `SELECT column_name 
+  FROM INFORMATION_SCHEMA.COLUMNS 
+  WHERE TABLE_NAME = 'articles';`
+  );
+  const articleColumn = articleRows.rows.map((row) => {
+    return row.column_name;
+  });
+  return articleColumn;
 };
