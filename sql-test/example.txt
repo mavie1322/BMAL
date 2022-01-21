@@ -1,12 +1,6 @@
 You are now connected to database "nc_news_test" as user "mavie1322".
- column_name 
--------------
- article_id
- created_at
- votes
- body
- author
- title
- topic
-(7 rows)
+ comment_id |          body          | votes |    author     | article_id |       created_at       
+------------+------------------------+-------+---------------+------------+------------------------
+          5 | I hate streaming noses |     0 | icellusedkars |          1 | 2020-11-03 21:00:00+00
+(1 row)
 

@@ -94,3 +94,20 @@ exports.checkArticleIdExist = (article_id) => {
       }
     });
 };
+
+exports.checkCommentIdExist = (comment_id) => {
+  return connection
+    .query(
+      `SELECT *
+      FROM comments
+      WHERE comments.comment_id = ${comment_id}`
+    )
+    .then(({ rows }) => {
+      console.log(rows, '<<<rows');
+      if (rows.length) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+};

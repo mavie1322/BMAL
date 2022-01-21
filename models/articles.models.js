@@ -97,9 +97,6 @@ exports.deleteCommentById = (comment_id) => {
   WHERE comment_id = $1 RETURNING*;`,
     [comment_id]
   );
-  // .then(({ rows }) => {
-  //   return rows;
-  // });
 };
 
 exports.selectUsers = () => {
@@ -120,8 +117,7 @@ exports.selectUserByUsername = (username) => {
     });
 };
 
-exports.updateCommentById = (comment_id, votes) => {
-  console.log(comment_id);
+exports.updateCommentById = (comment_id, votes = 0) => {
   return connection
     .query(
       `UPDATE comments
@@ -130,7 +126,6 @@ exports.updateCommentById = (comment_id, votes) => {
       [votes]
     )
     .then(({ rows }) => {
-      console.log(rows);
       return rows[0];
     });
 };

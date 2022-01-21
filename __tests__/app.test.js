@@ -97,7 +97,7 @@ describe('/api/articles/:article_id', () => {
           });
         });
     });
-    it('status: 200 and return the article when the request body is an empty object', () => {
+    it('status: 200 and return the unchanged article when the request body is an empty object', () => {
       const articleUpdated = {};
       return request(app)
         .patch('/api/articles/10')
@@ -309,7 +309,7 @@ describe('/api/articles/:article_id/comments', () => {
             article_id: 3,
             author: 'lurker',
             body: 'Where is the King? I will lead the fight',
-            created_at: '2022-01-20T21:42:47.123Z',
+            created_at: '2022-01-21T01:07:47.123Z',
             votes: 0,
           });
         });
@@ -378,18 +378,26 @@ describe('/api/articles/:article_id/comments', () => {
     });
   });
 });
-
+//NEED TO UNDERSTAND WHY THE ERROR IS GOING TO INVALID URL
 describe('/api/comments/:comment_id', () => {
-  describe.only('DELETE', () => {
+  describe('DELETE', () => {
     it('status: 204 and return no content', () => {
       return request(app).delete('/api/comments/2').expect(204);
     });
     it('status 404 and returns message for comment that does not exist', () => {
       return request(app)
-        .delete('/api/comments/1000')
+        .delete('/api/comments/0')
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe('Not Found');
+        });
+    });
+    it('status: 400 and returns message for invalid comment id', () => {
+      return request(app)
+        .delete('/api/comments/dog')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Invalid input');
         });
     });
   });
@@ -408,15 +416,80 @@ describe('/api/comments/:comment_id', () => {
             article_id: 1,
             author: 'butter_bridge',
             body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
-            created_at: '2020-07-09T21:11:00.000Z',
+            created_at: '2020-10-31T03:03:00.000Z',
             votes: 24,
           });
+        });
+    });
+
+    it('status: 200 and return the unchanged article when the request body is an empty object', () => {
+      const commentUpdated = {};
+      return request(app)
+        .patch('/api/comments/8')
+        .send(commentUpdated)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment).toEqual({
+            comment_id: 8,
+            article_id: 1,
+            author: 'icellusedkars',
+            body: 'Delicious crackerbreads',
+            created_at: '2020-04-14T21:19:00.000Z',
+            votes: 0,
+          });
+        });
+    });
+    it('status: 200 and returns the unchanged article when one property of the the request body has an syntax error', () => {
+      const commentUpdated = {
+        votres: 1,
+      };
+      return request(app)
+        .patch('/api/comments/5')
+        .send(commentUpdated)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment).toEqual({
+            comment_id: 5,
+            article_id: 1,
+            author: 'icellusedkars',
+            body: 'I hate streaming noses',
+            created_at: '2020-11-03T21:00:00.000Z',
+            votes: 0,
+          });
+        });
+    });
+    it('status: 400 and returns message "Bad Request" for incorrect type provided in the request body', () => {
+      const commentUpdated = {
+        votes: 'hello',
+      };
+      return request(app)
+        .patch('/api/articles/5')
+        .send(commentUpdated)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad Request');
+        });
+    });
+    it('status 404 and returns message for comment id that does not exist', () => {
+      return request(app)
+        .patch('/api/comments/90')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not Found');
+        });
+    });
+    it('status: 400 and returns message for invalid comment id', () => {
+      return request(app)
+        .patch('/api/articles/jug')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Invalid input');
         });
     });
   });
 });
 
-describe('/api/users', () => {
+describe.only('/api/users', () => {
   describe('GET', () => {
     it('status: 200 and return array of all users', () => {
       return request(app)
@@ -431,6 +504,14 @@ describe('/api/users', () => {
               username: expect.any(String),
             });
           });
+        });
+    });
+    it("status: 404 and return message 'Invalid url' ", () => {
+      return request(app)
+        .get('/api/ussers')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Invalid url');
         });
     });
   });

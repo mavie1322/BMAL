@@ -11,7 +11,10 @@ const {
   updateCommentById,
 } = require('../models/articles.models');
 
-const { checkArticleIdExist } = require('../db/utils/index');
+const {
+  checkArticleIdExist,
+  checkCommentIdExist,
+} = require('../db/utils/index');
 
 exports.getTopics = (req, res, next) => {
   selectTopics()
@@ -134,7 +137,7 @@ exports.postCommentByArticleId = (req, res, next) => {
             next(err);
           });
       } else {
-        return Promise.reject({ statut: 404, msg: 'Not Found' });
+        return Promise.reject({ status: 404, msg: 'Not Found' });
       }
     })
     .catch((err) => {
@@ -145,14 +148,19 @@ exports.postCommentByArticleId = (req, res, next) => {
 
 exports.removeCommentById = (req, res, next) => {
   const { comment_id } = req.params;
-
-  deleteCommentById(comment_id)
-    .then((result) => {
-      console.log(result, '<<', comment_id);
-      if (!rowCount) {
-        return Promise.reject({ staut: 404, msg: 'Not Found' });
+  checkCommentIdExist(comment_id)
+    .then((isCommentExist) => {
+      if (isCommentExist) {
+        deleteCommentById(comment_id)
+          .then(({ rowCount }) => {
+            res.status(204).end();
+          })
+          .catch((err) => {
+            console.log(err);
+            next(err);
+          });
       } else {
-        res.status(204).end();
+        return Promise.reject({ status: 400, msg: 'Invalid input' });
       }
     })
     .catch((err) => {
@@ -188,12 +196,21 @@ exports.getUserByUsername = (req, res, next) => {
 exports.patchCommentById = (req, res, next) => {
   const { comment_id } = req.params;
   const { votes } = req.body;
-  updateCommentById(comment_id, votes)
-    .then((comment) => {
-      res.status(200).send({ comment });
+  return checkCommentIdExist(comment_id)
+    .then((isCommentExist) => {
+      if (isCommentExist) {
+        updateCommentById(comment_id, votes)
+          .then((comment) => {
+            res.status(200).send({ comment });
+          })
+          .catch((err) => {
+            next(err);
+          });
+      } else {
+        return Promise.reject({ status: 404, msg: 'Not Found' });
+      }
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
