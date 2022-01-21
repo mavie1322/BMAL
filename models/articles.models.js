@@ -1,12 +1,6 @@
 const connection = require('../db/connection');
 
 exports.selectTopics = () => {
-  // try {
-  //   const result = await connection.query(`SELECT * FROM topics;`);
-  //   return result.rows;
-  // } catch (err) {
-  //   return Promise.reject({ status: 404, msg: "Not Found" });
-  // }
   return connection.query(`SELECT * FROM topics;`).then(({ rows }) => {
     return rows;
   });
@@ -69,14 +63,6 @@ exports.selectArticles = (queries) => {
 };
 
 exports.selectCommentsByArticleId = (article_id) => {
-  // const comment = await connection.query(`
-  //SELECT comment_id, votes, created_at,
-  //author,body
-  //FROM comments
-  //WHERE comments.article_id = ${id};
-  //`);
-
-  // return comment.rows;
   return connection
     .query(
       `
@@ -96,9 +82,9 @@ exports.insertCommentByArticleId = (article_id, reqBody) => {
 
   return connection
     .query(
-      `INSERT INTO comments (author, body, article_id)
-    VALUES ($1, $2, $3) RETURNING*;`,
-      [username, body, article_id]
+      `INSERT INTO comments (author, body, article_id, votes)
+    VALUES ($1, $2, $3, $4) RETURNING*;`,
+      [username, body, article_id, 0]
     )
     .then(({ rows }) => {
       return rows[0];
@@ -106,15 +92,14 @@ exports.insertCommentByArticleId = (article_id, reqBody) => {
 };
 
 exports.deleteCommentById = (comment_id) => {
-  return connection
-    .query(
-      `DELETE FROM comments
+  return connection.query(
+    `DELETE FROM comments
   WHERE comment_id = $1 RETURNING*;`,
-      [comment_id]
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+    [comment_id]
+  );
+  // .then(({ rows }) => {
+  //   return rows;
+  // });
 };
 
 exports.selectUsers = () => {

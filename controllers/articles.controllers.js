@@ -11,6 +11,8 @@ const {
   updateCommentById,
 } = require('../models/articles.models');
 
+const { checkArticleIdExist } = require('../db/utils/index');
+
 exports.getTopics = (req, res, next) => {
   selectTopics()
     .then((topics) => {
@@ -59,44 +61,44 @@ exports.getArticles = (req, res, next) => {
     'comment_count',
   ];
   const validOrder = ['ASC', 'DESC'];
+  const validTopic = ['mitch', 'cats', 'paper'];
 
   const queries = req.query;
   queries.sort_by ??= 'created_at';
   queries.order ??= 'DESC';
 
-  // if (!validSortBy.includes(queries.sort_by)) {
-  //   queries.sort_by = "created_at";
-  // }
-
-  // if (!validOrder.includes(queries.order)) {
-  //   queries.order = "DESC";
-  // }
   if (
     !validSortBy.includes(queries.sort_by) ||
     !validOrder.includes(queries.order)
-  ) {
+  )
     next({ status: 400, msg: 'Invalid query' });
-  }
 
   selectArticles(queries)
     .then((articles) => {
-      //console.log(articles);
       res.status(200).send({ articles });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-  selectCommentsByArticleId(article_id)
-    .then((result) => {
-      res.status(200).send({ comments: result });
+  return checkArticleIdExist(article_id)
+    .then((isArticleExist) => {
+      if (isArticleExist) {
+        selectCommentsByArticleId(article_id)
+          .then((comments) => {
+            res.status(200).send({ comments });
+          })
+          .catch((err) => {
+            next(err);
+          });
+      } else {
+        return Promise.reject({ status: 404, msg: 'Not Found' });
+      }
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
@@ -104,13 +106,39 @@ exports.getCommentsByArticleId = (req, res, next) => {
 exports.postCommentByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const reqBody = req.body;
+  const requestProperty = Object.keys(reqBody);
+  const reqProperty = ['body', 'username'];
 
-  insertCommentByArticleId(article_id, reqBody)
-    .then((comment) => {
-      res.status(201).send({ comment });
+  //Checking if request body property is missing field
+  if (requestProperty.length !== reqProperty.length) {
+    next({ status: 400, msg: 'Bad Request' });
+  }
+
+  //Checking if there is any mispelled on the property
+  const isMispelled = requestProperty.map((property) => {
+    return reqProperty.includes(property);
+  });
+  if (isMispelled.includes(false)) {
+    next({ status: 400, msg: 'Bad Request' });
+  }
+
+  return checkArticleIdExist(article_id)
+    .then((isArticleExist) => {
+      if (isArticleExist) {
+        insertCommentByArticleId(article_id, reqBody)
+          .then((comment) => {
+            res.status(201).send({ comment });
+          })
+          .catch((err) => {
+            console.log(err), '<<<insert';
+            next(err);
+          });
+      } else {
+        return Promise.reject({ statut: 404, msg: 'Not Found' });
+      }
     })
     .catch((err) => {
-      console.log(err);
+      console.log(err, '<<<is Exist');
       next(err);
     });
 };
@@ -119,8 +147,13 @@ exports.removeCommentById = (req, res, next) => {
   const { comment_id } = req.params;
 
   deleteCommentById(comment_id)
-    .then(() => {
-      res.status(204).send();
+    .then((result) => {
+      console.log(result, '<<', comment_id);
+      if (!rowCount) {
+        return Promise.reject({ staut: 404, msg: 'Not Found' });
+      } else {
+        res.status(204).end();
+      }
     })
     .catch((err) => {
       console.log(err);

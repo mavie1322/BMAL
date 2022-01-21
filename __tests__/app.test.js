@@ -66,7 +66,7 @@ describe('/api/articles/:article_id', () => {
           expect(body.msg).toBe('Not Found');
         });
     });
-    it('status: 400 and returns message "Bad Request" for invalide article_id', () => {
+    it('status: 400 and returns message "Bad Request" for invalid article_id', () => {
       return request(app)
         .get('/api/articles/pip')
         .expect(400)
@@ -97,7 +97,7 @@ describe('/api/articles/:article_id', () => {
           });
         });
     });
-    it('status: 200 and return the article with empty object', () => {
+    it('status: 200 and return the article when the request body is an empty object', () => {
       const articleUpdated = {};
       return request(app)
         .patch('/api/articles/10')
@@ -115,7 +115,7 @@ describe('/api/articles/:article_id', () => {
           });
         });
     });
-    it('status: 200 and returns the article without changing the vote', () => {
+    it('status: 200 and returns the unchanged article when one property of the the request body has an syntax error', () => {
       const articleUpdated = {
         votres: 1,
       };
@@ -173,7 +173,7 @@ describe('/api/articles', () => {
           });
         });
     });
-    it('status 200 and the array of all articles are sorted by date', () => {
+    it('QUERY: sorted by date and descending order by default,status: 200 and return the array of all articles are', () => {
       return request(app)
         .get('/api/articles')
         .expect(200)
@@ -182,16 +182,16 @@ describe('/api/articles', () => {
           expect(articles).toBeSortedBy('created_at', { descending: true });
         });
     });
-    it('status 200 and return the array of all articles in descending order', () => {
+    it('QUERY: ascending order,status: 200 and return the array of all articles', () => {
       return request(app)
-        .get('/api/articles?order=DESC')
+        .get('/api/articles?order=ASC')
         .expect(200)
         .then(({ body }) => {
           const { articles } = body;
-          expect(articles).toBeSortedBy('created_at', { descending: true });
+          expect(articles).toBeSortedBy('created_at', { descending: false });
         });
     });
-    it('status 200 and the array of all articles are sorted by any query and any order', () => {
+    it('QUERY: sorted by any query and any order,status: 200 and return array of all articles', () => {
       return request(app)
         .get('/api/articles?order=ASC&sort_by=title')
         .expect(200)
@@ -200,23 +200,7 @@ describe('/api/articles', () => {
           expect(articles).toBeSortedBy('title', { descending: false });
         });
     });
-    it("status: 404 and return message 'Invalid Url' ", () => {
-      return request(app)
-        .get('/api/artricles')
-        .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toBe('Invalid Url');
-        });
-    });
-    it('returns 400 and an error message ', () => {
-      return request(app)
-        .get('/api/articles?sort_by=invalid_property')
-        .expect(400)
-        .then(({ body }) => {
-          expect(body['msg']).toBe('Invalid query');
-        });
-    });
-    it('return 200 and returns an array of articles with mitch as topic', () => {
+    it('QUERY: by topic,status: 200 and returns an array of articles filter by topic', () => {
       return request(app)
         .get('/api/articles?topic=mitch')
         .expect(200)
@@ -228,6 +212,38 @@ describe('/api/articles', () => {
           });
         });
     });
+    it("Non-existing Route - status: 404 and return message 'Invalid url' ", () => {
+      return request(app)
+        .get('/api/artricles')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Invalid url');
+        });
+    });
+    it('status: 400 and return an error message for invalid query(sort_by)', () => {
+      return request(app)
+        .get('/api/articles?sort_by=invalid_property')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body['msg']).toBe('Invalid query');
+        });
+    });
+    it('status: 400 and return an error message for invalid query(order)', () => {
+      return request(app)
+        .get('/api/articles?order=1')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body['msg']).toBe('Invalid query');
+        });
+    });
+    it('status: 400 and return an error message for invalid query(topic)', () => {
+      return request(app)
+        .get('/api/articles?topic=1')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body['msg']).toBe('Invalid query');
+        });
+    });
   });
 });
 
@@ -235,7 +251,7 @@ describe('/api/articles/:article_id/comments', () => {
   describe('GET', () => {
     it('status: 200 and return an array of comment for the given article_id', () => {
       return request(app)
-        .get('/api/articles/2/comments')
+        .get('/api/articles/3/comments')
         .expect(200)
         .then(({ body }) => {
           const { comments } = body;
@@ -249,6 +265,31 @@ describe('/api/articles/:article_id/comments', () => {
               votes: expect.any(Number),
             });
           });
+        });
+    });
+    it('status: 200 and return empty array object for article_id that exist but does not have any comment', () => {
+      return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then(({ body }) => {
+          const { comments } = body;
+          expect(comments.length).toBe(0);
+        });
+    });
+    it('status 404 and returns message for aricle_id that is valid but does not exist', () => {
+      return request(app)
+        .get('/api/articles/1000/comments')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not Found');
+        });
+    });
+    it('status: 400 and returns message for invalid article_id', () => {
+      return request(app)
+        .get('/api/articles/pip/comments')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Invalid input');
         });
     });
   });
@@ -268,18 +309,88 @@ describe('/api/articles/:article_id/comments', () => {
             article_id: 3,
             author: 'lurker',
             body: 'Where is the King? I will lead the fight',
-            created_at: new Date(),
+            created_at: '2022-01-20T21:42:47.123Z',
             votes: 0,
           });
+        });
+    });
+    it('status: 400 and return message when request body missing a field', () => {
+      const commentToAdd = {
+        username: 'rogersop',
+      };
+      return request(app)
+        .post('/api/articles/1/comments')
+        .send(commentToAdd)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad Request');
+        });
+    });
+    it('status: 400 and return message when request body property is mispelled', () => {
+      const commentToAdd = {
+        usernames: 'rogersop',
+        body: 'Tasha makes people feel like she is on their side so they can spill the beans',
+      };
+      return request(app)
+        .post('/api/articles/1/comments')
+        .send(commentToAdd)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad Request');
+        });
+    });
+    it('status: 400 and return message when request body property is empty object', () => {
+      const commentToAdd = {};
+      return request(app)
+        .post('/api/articles/1/comments')
+        .send(commentToAdd)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad Request');
+        });
+    });
+
+    it('status 404 and returns message for aricle_id that is valid but does not exist', () => {
+      const commentToAdd = {
+        username: 'rogersop',
+        body: 'Tasha makes people feel like she is on their side so they can spill the beans',
+      };
+      return request(app)
+        .post('/api/articles/1000/comments')
+        .send(commentToAdd)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not Found');
+        });
+    });
+    it('status: 400 and returns message for invalid article_id', () => {
+      const commentToAdd = {
+        username: 'rogersop',
+        body: 'Tasha makes people feel like she is on their side so they can spill the beans',
+      };
+      return request(app)
+        .post('/api/articles/pip/comments')
+        .expect(400)
+        .send(commentToAdd)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Invalid input');
         });
     });
   });
 });
 
 describe('/api/comments/:comment_id', () => {
-  describe('DELETE', () => {
+  describe.only('DELETE', () => {
     it('status: 204 and return no content', () => {
       return request(app).delete('/api/comments/2').expect(204);
+    });
+    it('status 404 and returns message for comment that does not exist', () => {
+      return request(app)
+        .delete('/api/comments/1000')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not Found');
+        });
     });
   });
   describe('PATCH', () => {
@@ -297,7 +408,7 @@ describe('/api/comments/:comment_id', () => {
             article_id: 1,
             author: 'butter_bridge',
             body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
-            created_at: new Date(1594329060000),
+            created_at: '2020-07-09T21:11:00.000Z',
             votes: 24,
           });
         });

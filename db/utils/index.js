@@ -78,3 +78,19 @@ exports.formatCommentsData = (commentData) => {
     }
   );
 };
+
+exports.checkArticleIdExist = (article_id) => {
+  return connection
+    .query(
+      `SELECT *
+      FROM articles
+      WHERE articles.article_id = ${article_id}`
+    )
+    .then(({ rows }) => {
+      if (rows.length) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+};
