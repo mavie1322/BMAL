@@ -34,8 +34,5 @@
     "setupFilesAfterEnv": [
       "jest-sorted"
     ]
-  },
-  "prettier": {
-    "singleQuote": true
   }
 }

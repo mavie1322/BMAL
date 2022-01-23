@@ -1,17 +1,22 @@
 const express = require('express');
 const app = express();
+const { getSummaryEndpoints } = require('./controllers/api.controller');
+const { getTopics } = require('./controllers/topics.controller');
 const {
-  getTopics,
-  getArticleById,
-  getCommentsByArticleId,
-  patchArticleById,
-  getArticles,
   postCommentByArticleId,
   removeCommentById,
+  getCommentsByArticleId,
+  patchCommentById,
+} = require('./controllers/comments.controller');
+const {
   getUsers,
   getUserByUsername,
-  patchCommentById,
-} = require('./controllers/articles.controllers');
+} = require('./controllers/users.controller');
+const {
+  getArticleById,
+  patchArticleById,
+  getArticles,
+} = require('./controllers/articles.controller');
 
 const {
   handleCustomErrors,
@@ -37,6 +42,8 @@ app.post('/api/articles/:article_id/comments', postCommentByArticleId);
 
 app.delete('/api/comments/:comment_id', removeCommentById);
 app.patch('/api/comments/:comment_id', patchCommentById);
+
+app.get('/api', getSummaryEndpoints);
 
 //ERROR HANDLING
 app.all('*', handle404s);

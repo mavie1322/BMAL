@@ -3,6 +3,7 @@ const testData = require('../db/data/test-data/index.js');
 const seed = require('../db/seeds/seed.js');
 const app = require('../app');
 const request = require('supertest');
+const { deleteCommentById } = require('../models/comments.model.js');
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -55,6 +56,16 @@ describe('/api/articles/:article_id', () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             comment_count: expect.any(String),
+          });
+          expect(article).toEqual({
+            author: 'butter_bridge',
+            title: 'Living in the shadow of a great man',
+            topic: 'mitch',
+            article_id: 1,
+            body: 'I find this existence challenging',
+            created_at: '2020-07-09T21:11:00.000Z',
+            votes: 100,
+            comment_count: '11',
           });
         });
     });
@@ -334,7 +345,7 @@ describe('/api/articles/:article_id/comments', () => {
             article_id: 3,
             author: 'lurker',
             body: 'Where is the King? I will lead the fight',
-            created_at: '2022-01-21T01:07:47.123Z',
+            created_at: expect.any(String),
             votes: 0,
           });
         });
@@ -564,6 +575,28 @@ describe('/api/users/:username', () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe('Not Found');
+        });
+    });
+  });
+});
+
+describe('/api', () => {
+  describe('GET', () => {
+    it('status: 200 and return all the available endpoints', () => {
+      return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({ body }) => {
+          const endpoint = body;
+          expect(endpoint).toBeInstanceOf(Object);
+        });
+    });
+    it('status: 200 and return all the available endpoints', () => {
+      return request(app)
+        .get('/apres')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Invalid url');
         });
     });
   });

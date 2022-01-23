@@ -1,12 +1,6 @@
 You are now connected to database "nc_news_test" as user "mavie1322".
- column_name 
--------------
- article_id
- created_at
- votes
- body
- author
- title
- topic
-(7 rows)
+ article_id |                title                | topic |    author     |               body                |       created_at       | votes | comment_count 
+------------+-------------------------------------+-------+---------------+-----------------------------------+------------------------+-------+---------------
+          1 | Living in the shadow of a great man | mitch | butter_bridge | I find this existence challenging | 2020-07-09 22:11:00+01 |   100 |            11
+(1 row)
 
