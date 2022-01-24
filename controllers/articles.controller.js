@@ -56,7 +56,7 @@ exports.getArticles = (req, res, next) => {
           //set by default these queries
 
           if (!queries.sort_by) queries.sort_by = "created_at";
-          if (!queries.order) queries.order ??= "DESC";
+          if (!queries.order) queries.order = "DESC";
 
           if (
             !validSortBy.includes(queries.sort_by) ||
