@@ -54,8 +54,9 @@ exports.getArticles = (req, res, next) => {
 
           const queries = req.query;
           //set by default these queries
-          queries.sort_by ??= "created_at";
-          queries.order ??= "DESC";
+
+          if (!queries.sort_by) queries.sort_by = "created_at";
+          if (!queries.order) queries.order ??= "DESC";
 
           if (
             !validSortBy.includes(queries.sort_by) ||
@@ -68,14 +69,17 @@ exports.getArticles = (req, res, next) => {
               res.status(200).send({ articles });
             })
             .catch((err) => {
+              console.log(err, "<<<1");
               next(err);
             });
         })
         .catch((err) => {
+          console.log(err, "<<<2");
           next(err);
         });
     })
     .catch((err) => {
+      console.log(err, "<<<3");
       next(err);
     });
 };
