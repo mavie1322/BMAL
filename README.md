@@ -1,73 +1,60 @@
-# BMAL
+# BMAL                                                
 
 We built an application such as reddit or quora where users can publish, comment or like any articles or journal published on the website.
+
+https://bmal237.herokuapp.com/ 
  
  ## Back End Functionalities
  
  The application is hoisted in Heroku. It provide deployment service that allows to push code and it build, run and hoist Node.js application. Heroku allows easy database integration which is great.
  
- ### Technologies
- The project is created with: 
+ ### Build with: 
  * Node.js v17.0.1
  * PostgreSQL 12.9 
 
 ### Set Up
-To run this projet, you need to install locally ou globally npm, postgres and git.
+To run this projet, you need to install globally Node JS, PostgreSQL and Git.
 
 Then you need to follow these differents steps:
 
 #### Fork this repository
 
  #### Clone the forked repository 
- On the command line, navigate to the folder you want this repository to be in and enter the code below:
+ On the command line, navigate to the folder you want this repository to be store and enter the code below:
  
  ```
- $ git clone 
+ $ git clone https_url
  ```
 #### Install dependencies
 
 You need to enter the following code on your terminal:
 
-* Express
-
-  It is a Node.js web application framework that provides a robust set of features for web and mobile applications.
+* Express: a Node.js web application framework that provides a robust set of features for web and mobile applications.
 
  ```
  $ npm install express
  ```
-* Dotenv
-
-  It allows us to load environment variables from a .env file into process.env.
+* Dotenv: allows us to load environment variables from a .env file into process.env.
  ```
  $ npm install dotenv
  ```
-* Pg
-
-  It is a collection of node.js modules for interfacing with your PostgreSQL database.
+* Pg: a collection of node.js modules for interfacing with your PostgreSQL database.
  ```
  $ npm install pg
  ```
-* Pg-format
-
-  It enables us to safely create dynamic SQL queries and prevent SQL injections.
+* Pg-format: enables us to safely create dynamic SQL queries and prevent SQL injections.
  ```
  $ npm install pg-format
  ```
- * Jest
-
-  A delightful JavaScript Testing Framework with a focus on simplicity.
+ * Jest: a delightful JavaScript Testing Framework with a focus on simplicity.
  ```
  $ npm install -D jest
  ```
-* Jest-sorted
-
-  It extends Jest.expect to allow us to specify the order we expect our responses to return in our tests.
+* Jest-sorted: extends Jest.expect to allow us to specify the order we expect our responses to return in our tests.
  ```
  $ npm install --save-dev jest-sorted
  ```
-* Supertest
-
-  It allows us to run tests against our server endpoints 
+* Supertest: allows us to run tests against our server endpoints 
  ```
  $ npm install -D supertest
  ```
@@ -103,4 +90,7 @@ The test_database_name and development_database_name can be found in setup.sql f
   ```
   $ npm test file_name
   ```
-  
+ ### Improvements:
+ * Replace Promise by async functions
+ * SQL injection vulnerabilities on the models files
+ * Use `.route` for endpoints that share the same path
