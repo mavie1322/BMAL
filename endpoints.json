@@ -48,8 +48,8 @@
     "exampleResponse": {
       "comments": [
         {
+          "comment_id": 12,
           "author": "harry_potter",
-          "article_id": 1,
           "body": "It will come a time where your joy will tear to ashes",
           "created_at": 2007092111,
           "votes": 100
@@ -60,6 +60,21 @@
   "DELETE /api/comments/:comment_id/": {
     "description": "erase the comment",
     "queries": []
+  },
+  "PATCH /api/comments/:comment_id/": {
+    "description": "modify the number of votes on the comment",
+    "queries": [],
+    "exampleResponse": {
+      "comment": [
+        {
+          "comment_id": 23,
+          "author": "harry_potter",
+          "body": "It will come a time where your joy will tear to ashes",
+          "created_at": 2007092111,
+          "votes": 100
+        }
+      ]
+    }
   },
   "GET /api/users": {
     "description": "serves an array of all users",
