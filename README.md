@@ -2,7 +2,7 @@
 
 We built an application such as reddit or quora where users can publish, comment or like any articles or journal published on the website.
 
-https://bmal237.herokuapp.com/ 
+https://bmal237.herokuapp.com/api 
  
  ## Back End Functionalities
  
