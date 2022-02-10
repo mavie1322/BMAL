@@ -100,6 +100,7 @@
   "PATCH /api/comments/:comment_id/": {
     "description": "modify the number of votes on the comment",
     "queries": [],
+    "exampleRequest": { "votes": 20 },
     "exampleResponse": {
       "comment": [
         {
