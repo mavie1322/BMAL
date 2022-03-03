@@ -17,8 +17,6 @@ To run this projet, you need to install globally Node JS, PostgreSQL and Git.
 
 Then you need to follow these differents steps:
 
-#### Fork this repository
-
  #### Clone the forked repository 
  On the command line, navigate to the folder you want this repository to be store and enter the code below:
  
@@ -27,36 +25,10 @@ Then you need to follow these differents steps:
  ```
 #### Install dependencies
 
-You need to enter the following code on your terminal:
-
-* Express: a Node.js web application framework that provides a robust set of features for web and mobile applications.
+You need to enter the following code on your terminal to install the dependencies such as express, dotenv, pg, jest, supertest and more.
 
  ```
- $ npm install express
- ```
-* Dotenv: allows us to load environment variables from a .env file into process.env.
- ```
- $ npm install dotenv
- ```
-* Pg: a collection of node.js modules for interfacing with your PostgreSQL database.
- ```
- $ npm install pg
- ```
-* Pg-format: enables us to safely create dynamic SQL queries and prevent SQL injections.
- ```
- $ npm install pg-format
- ```
- * Jest: a delightful JavaScript Testing Framework with a focus on simplicity.
- ```
- $ npm install -D jest
- ```
-* Jest-sorted: extends Jest.expect to allow us to specify the order we expect our responses to return in our tests.
- ```
- $ npm install --save-dev jest-sorted
- ```
-* Supertest: allows us to run tests against our server endpoints 
- ```
- $ npm install -D supertest
+ $ npm install 
  ```
 
 #### Create .env files
