@@ -175,6 +175,28 @@ describe("/api/articles/:article_id", () => {
         });
     });
   });
+
+  describe("DELETE", () => {
+    it("status: 204 and return no content", () => {
+      return request(app).delete("/api/articles/10").expect(204);
+    });
+    it("status: 404 and returns message for valid comment id that does not exist", () => {
+      return request(app)
+        .delete("/api/articles/0")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
+    it("status: 400 and returns message for invalid comment id", () => {
+      return request(app)
+        .delete("/api/articles/dog")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid input");
+        });
+    });
+  });
 });
 
 describe("/api/articles", () => {
@@ -272,12 +294,67 @@ describe("/api/articles", () => {
           expect(body["msg"]).toBe("Invalid query");
         });
     });
-    it("status: 400 and return an error message for invalid query(topic)", () => {
+  });
+  describe("POST", () => {
+    it("status: 201 and return the posted articles", () => {
+      const articleToAdd = {
+        author: "rogersop",
+        title: "test",
+        body: "I would like to have a generous man with good job",
+        topic: "paper",
+      };
       return request(app)
-        .get("/api/articles?topic=1")
+        .post("/api/articles")
+        .send(articleToAdd)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article).toEqual({
+            article_id: 13,
+            title: "test",
+            topic: "paper",
+            author: "rogersop",
+            body: "I would like to have a generous man with good job",
+            created_at: expect.any(String),
+            votes: 0,
+            comment_count: 0,
+          });
+        });
+    });
+    it("status: 400 and return message when request body missing a field", () => {
+      const articleToAdd = {
+        username: "rogersop",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(articleToAdd)
         .expect(400)
         .then(({ body }) => {
-          expect(body["msg"]).toBe("Invalid query");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    it("status: 400 and return message when request body property is mispelled", () => {
+      const articleToAdd = {
+        usernames: "rogersop",
+        body: "Tasha makes people feel like she is on their side so they can spill the beans",
+        title: "Welcome to my wold",
+        topik: "cat",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(articleToAdd)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    it("status: 400 and return message when request body property is empty object", () => {
+      const articleToAdd = {};
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(articleToAdd)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
         });
     });
   });
