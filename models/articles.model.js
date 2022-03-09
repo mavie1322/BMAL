@@ -55,3 +55,25 @@ exports.selectArticles = (queries) => {
       return rows;
     });
 };
+exports.insertArticle = (reqBody) => {
+  const { author, title, body, topic } = reqBody;
+
+  return connection
+    .query(
+      `INSERT INTO articles(author, title, body, topic, votes)
+      VALUES($1, $2, $3, $4, $5) RETURNING*;`,
+      [author, title, body, topic, 0]
+    )
+    .then(({ rows }) => {
+      rows[0]["comment_count"] = 0;
+      return rows[0];
+    });
+};
+
+exports.deleteArticleById = (article_id) => {
+  return connection.query(
+    `DELETE FROM articles
+    WHERE article_id = $1 RETURNING*;`,
+    [article_id]
+  );
+};
