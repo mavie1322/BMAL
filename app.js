@@ -16,6 +16,8 @@ const {
   getArticleById,
   patchArticleById,
   getArticles,
+  postArticles,
+  removeArticlesById,
 } = require("./controllers/articles.controller");
 
 const {
@@ -36,9 +38,11 @@ app.get("/api/users", getUsers);
 app.get("/api/users/:username", getUserByUsername);
 
 app.get("/api/articles", getArticles);
+app.post("/api/articles", postArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticleById);
+app.delete("/api/articles/:article_id", removeArticlesById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
