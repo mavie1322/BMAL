@@ -1,4 +1,4 @@
-const connection = require('../db/connection.js');
+const connection = require("../db/connection.js");
 
 exports.updateCommentById = (comment_id, votes = 0) => {
   return connection
@@ -20,7 +20,8 @@ exports.selectCommentsByArticleId = (article_id) => {
       SELECT comment_id, votes, created_at,
       author,body
       FROM comments
-      WHERE comments.article_id = ${article_id};
+      WHERE comments.article_id = ${article_id}
+      ORDER BY created_at DESC;
     `
     )
     .then(({ rows }) => {
