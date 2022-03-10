@@ -33,10 +33,7 @@ exports.selectArticles = (queries) => {
   const order = queries.order.toUpperCase();
   const topic = queries.topic;
 
-  const queryArray = [];
   const whereTopic = topic ? `WHERE topic = $1` : "";
-
-  if (topic) queryArray.push(topic);
 
   return connection
     .query(
@@ -48,8 +45,7 @@ exports.selectArticles = (queries) => {
         ON articles.article_id = comments.article_id
         ${whereTopic}
         GROUP BY articles.article_id
-        ORDER BY ${sort} ${order};`,
-      queryArray
+        ORDER BY ${sort} ${order};`
     )
     .then(({ rows }) => {
       return rows;
