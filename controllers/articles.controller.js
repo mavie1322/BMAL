@@ -82,7 +82,6 @@ exports.getArticles = (req, res, next) => {
 };
 
 exports.postArticles = (req, res, next) => {
-  console.log(req.body);
   const reqBody = req.body;
   const requestProperty = Object.keys(reqBody);
   const reqProperty = ["body", "author", "title", "topic"];
@@ -114,13 +113,17 @@ exports.removeArticlesById = (req, res, next) => {
     .then((isArticleExist) => {
       if (isArticleExist) {
         deleteArticleById(article_id)
-          .then((result) => {
-            res.status(204).end();
+          .then((rowCount) => {
+            if (rowCount) {
+              res.status(204).end();
+            }
           })
           .catch((err) => next(err));
       } else {
         return Promise.reject({ status: 404, msg: "Not Found" });
       }
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      next(err);
+    });
 };
