@@ -1,4 +1,4 @@
-const connection = require('../connection');
+const connection = require("../connection");
 
 exports.dropTables = (name) => {
   return connection.query(`DROP TABLE IF EXISTS ${name};`);
@@ -45,6 +45,13 @@ exports.createCommentsTable = () => {
         article_id INT REFERENCES articles(article_id),
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );`);
+};
+// add ON DELETE CASCADE on the foreign key constraint in the comments table
+exports.addConstraintOnDelete = () => {
+  return connection.query(`ALTER TABLE comments
+DROP CONSTRAINT comments_article_id_fkey,
+ADD CONSTRAINT comments_article_id_fkey
+FOREIGN KEY (article_id) REFERENCES articles(article_id) ON DELETE CASCADE;`);
 };
 
 /* The `format` function takes in an array of objects and returns an array of arrays.
