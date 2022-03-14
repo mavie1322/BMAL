@@ -69,9 +69,13 @@ exports.insertArticle = (reqBody) => {
 };
 
 exports.deleteArticleById = (article_id) => {
-  return connection.query(
-    `DELETE FROM articles
+  return connection
+    .query(
+      `DELETE FROM articles
     WHERE article_id = $1 RETURNING*;`,
-    [article_id]
-  );
+      [article_id]
+    )
+    .then((result) => {
+      return result.rowCount;
+    });
 };
