@@ -10,6 +10,7 @@ const {
   formatArticlesData,
   formatCommentsData,
   formatTopicsData,
+  addConstraintOnDelete,
 } = require("../utils/index");
 
 const seed = (data) => {
@@ -78,6 +79,10 @@ const seed = (data) => {
           formatCommentsData(commentData)
         );
         return connection.query(insertCommentsData);
+      })
+      //alter the comments table by adding ON DELETE CASCADE on the foreign key article_id
+      .then(() => {
+        return addConstraintOnDelete();
       })
   );
 };
